@@ -6,7 +6,7 @@ class Messages {
         // console.log(data);
         const apiUrl = 'http://localhost:3002/api';
         // console.log('GET ' + apiUrl + '/message/' + data.conversationId);
-        return axios.get(apiUrl + '/message/' + data.conversationId);
+        return axios.get(apiUrl + '/message/' + data.id);
     }
 
     addMessageToConversationByUserId(data){

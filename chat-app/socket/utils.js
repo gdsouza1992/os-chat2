@@ -9,6 +9,15 @@ utils.addClientToRooms = (client,rooms) => {
     return;
 }
 
+utils.makeConversationObjects = (conversations) => {
+    return conversations.map((conversation) => {
+        const conversationObj = conversation.conversation;
+        conversationObj.role = conversation.role;
+        conversationObj.unread = conversation.unread;
+        return conversationObj;
+    })
+}
+
 // utils.getRoomsFromORM(rooms){
 
 // }

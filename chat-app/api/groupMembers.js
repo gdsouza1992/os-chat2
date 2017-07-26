@@ -13,7 +13,7 @@ class GroupMembers {
     getRosterData(data){
         const apiUrl = 'http://localhost:3002/api';
         // console.log('POST ' + apiUrl + '/message/' + data.conversationId);
-        return axios.get(apiUrl + '/groupMember/' + data.conversationId);
+        return axios.get(apiUrl + '/groupMember/' + data.id);
     }
 
     addUserToGroup(data){

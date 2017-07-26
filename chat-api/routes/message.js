@@ -30,9 +30,9 @@ router.route('/:conversation_id')
         const message = new schema.Entity('messages', { user });
         const MessageSchema = { messages: [ message ] }
         const normalizedData = normalize(data, MessageSchema);
-        console.log(normalizedData.entities.messages);
+        // console.log(normalizedData.entities.messages);
         res.json(normalizedData);
-        res.json(data)
+        // res.json(data)
         // res.json(normalizedData);
         // res.json({test: "ASDFA"})
     })
@@ -67,7 +67,7 @@ router.route('/:conversation_id')
     .then((data) => {
         const insertedMsgId = data.dataValues.id;
         message._modelOptions.instanceMethods.retrieveMessagesById(insertedMsgId).then((data) => {
-            console.log(data)
+            // console.log(data)
             res.send(data);
         })
         .catch((error) => {

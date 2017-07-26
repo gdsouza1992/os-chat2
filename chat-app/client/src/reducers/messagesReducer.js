@@ -9,7 +9,8 @@ export default function(state = {}, action) {
         return data
 
     case "ON_LOAD_MESSAGES": 
-        data = Object.assign({}, state, {'messages': action.payload.messagesData.messages});
+        console.log("ON_LOAD_MESSAGES")
+        data = Object.assign({}, state, {'messages': {}});
         return data
 
     default:

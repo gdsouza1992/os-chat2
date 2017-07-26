@@ -1,13 +1,14 @@
 import { combineReducers } from "redux"
 
-import conversations from "./conversationsReducer"
-import messages from "./messagesReducer"
-import activeUser from "./activeUserReducer"
-import users from "./usersReducer"
+import conversationsReducer from "./conversationsReducer"
+// import messages from "./messagesReducer"
+// import activeUser from "./activeUserReducer"
+import usersReducer from "./usersReducer"
 
 export default combineReducers({
-    conversations,
-    messages,
-    users,
-    activeUser
+    conversationsReducer,
+    usersReducer
+    // messages,
+    // users,
+    // activeUser
 })

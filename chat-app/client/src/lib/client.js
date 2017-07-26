@@ -11,9 +11,11 @@ class Client extends EventEmitter {
             this.emit('load-messages',data);
         });
 
-    //     this.socket.on('send-new-messages-server', (data) => {
-    //         this.emit('load-new-messages-client-success',data);
-    //     })
+
+
+        this.socket.on('new-message-server', (data) => {
+            this.emit('new-message',data);
+        })
 
     //     this.socket.on('send-conversation-list-updated-server', (data) => {
     //         this.fetchConversations(data.userId);
@@ -23,9 +25,9 @@ class Client extends EventEmitter {
     //         this.emit('load-conversations-client-success', data);
     //     });
 
-    //     this.socket.on('send-reset-unread-count-server', (data) => {
-    //         this.emit('load-conversation-unread-counts', data);
-    //     })
+        this.socket.on('reset-unread-counts-server', (data) => {
+            this.emit('reset-unread-counts', data);
+        })
 
         this.socket.on('load-roster-server', (data) => {
             this.emit('load-roster', data);
@@ -73,6 +75,18 @@ class Client extends EventEmitter {
             return;
         }
         this.socket.emit('load-roster', data);
+    }
+
+    sendMessage(data){
+        this.socket.emit('send-message', data)
+    }
+
+    resetUnreadCounts(activeConversation, activeUser){
+        const data = {
+            conversation: activeConversation,
+            user: activeUser
+        }
+        this.socket.emit('reset-unread-counts', data)
     }
 
     // fetchRoster(conversationId){

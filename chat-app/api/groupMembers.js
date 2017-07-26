@@ -5,8 +5,8 @@ class GroupMembers {
         const apiUrl = 'http://localhost:3002/api';
         // console.log('POST ' + apiUrl + '/message/' + data.conversationId);
         return axios.post(apiUrl + '/groupMember/reset', {
-            conversationId: data.conversationId,
-            userId: data.userId
+            conversationId: data.conversation.id,
+            userId: data.user.id
         });
     }
 

@@ -4,7 +4,6 @@ const _ = require('lodash');
 export default function(state = {}, action) {
     let data;
     let conversations;
-    let conversationId;
 
     console.log("ConversationReducer")
 
@@ -25,6 +24,17 @@ export default function(state = {}, action) {
         data = Object.assign({}, state, {'roster': roster});
         return data;
 
+    case "ON_INCREMENT_UNREAD":
+        const newMessage = action.payload;
+        const newMessageConversationId = newMessage.conversationId;
+        conversations = _.cloneDeep(state.conversations);
+        conversations[newMessageConversationId].unread++;
+        data = Object.assign({}, state, {'conversations': conversations });
+        return data
+
+
+
+
     // case "ON_SET_CONVERSATIONS":
     //     data = Object.assign({}, state, {'activeConversation': action.payload}); 
     //     return data
@@ -38,14 +48,12 @@ export default function(state = {}, action) {
     //     return data
 
 
-    // case "ON_RESET_UNREAD_COUNT":
-    //     // const conversationId = action.payload.conversationId;
-    //     // const status = action.payload.status;
-    //     const readConversationId = action.payload.conversationId;
-    //     conversations = _.cloneDeep(state.conversationMap);
-    //     conversations[readConversationId].unread = 0;
-    //     data = Object.assign({}, state, {'conversationMap': conversations});
-    //     return data;
+    case "ON_UNREAD_RESET_COUNTS":
+        const readConversationId = action.payload.conversationId;
+        conversations = _.cloneDeep(state.conversations);
+        conversations[readConversationId].unread = 0;
+        data = Object.assign({}, state, {'conversations': conversations});
+        return data;
 
     // case "ON_LOAD_ROSTER":
     //     const usersData = action.payload;

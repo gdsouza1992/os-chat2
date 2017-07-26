@@ -12,9 +12,9 @@ class Messages {
     addMessageToConversationByUserId(data){
         const apiUrl = 'http://localhost:3002/api';
         // console.log('POST ' + apiUrl + '/message/' + data.conversationId);
-        return axios.post(apiUrl + '/message/' + data.conversationId, {
+        return axios.post(apiUrl + '/message/' + data.conversation.id, {
             content: data.message,
-            userId: data.userId
+            userId: data.user.userId
         });
     }
 }

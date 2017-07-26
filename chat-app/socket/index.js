@@ -74,36 +74,37 @@ class Socket{
                 })
             })
 
-            // client.on('send-message-client', function(data){
-            //     //emit to conversation id the message
-                
-            //     Messages.addMessageToConversationByUserId(data)
-            //     .then((response) => {
-            //         if(response.status === 200){
-            //             const results = {messagesData : response.data, messageStatus: response.status, isNew: true, conversationId: data.conversationId, sender: data.userId}
+            client.on('send-message', function(data){
+                //emit to conversation id the message
+                Messages.addMessageToConversationByUserId(data)
+                .then((response) => {
+                    if(response.status === 200){
+                        console.log(response.data);
+                        const newMessage = response.data;
+                        server.to(`conversation:${data.conversation.id}`).emit('new-message-server', newMessage);
+                    } else {
+                        server.emit('send-error-server', error);
+                    }
+                })
+                .catch((err) => {
+                    const error = {messages : 'Error in adding messages', err}
+                    server.emit('send-error-server', error);
+                })
+            })
 
-            //             server.to(`conversation:${data.conversationId}`).emit('send-new-messages-server', results);
-            //         } else {
-            //             server.emit('send-error-server', error);
-            //         }
-            //     })
-            //     .catch((err) => {
-            //         const error = {messages : 'Error in adding messages', err}
-            //         server.emit('send-error-server', error);
-            //     })
-            // })
-
-            // client.on('send-reset-unread-count-client', function(data){
-            //     GroupMembers.resetUnreadCount(data)
-            //     .then((response)=>{
-            //         const results = response.data;
-            //         server.to(client.id).emit('send-reset-unread-count-server',results);
-            //     })
-            //     .catch((err) => {
-            //         const error = {messages : 'Error in resetting conversation unread count', err}
-            //         server.emit('send-error-server', error);
-            //     })
-            // })
+            client.on('reset-unread-counts', function(groupMemberData){
+                console.log(groupMemberData);
+                GroupMembers.resetUnreadCount(groupMemberData)
+                .then((response)=>{
+                    const results = response.data;
+                    console.log(results);
+                    server.to(client.id).emit('reset-unread-counts-server',results);
+                })
+                .catch((err) => {
+                    const error = {messages : 'Error in resetting conversation unread count', err}
+                    server.emit('send-error-server', error);
+                })
+            })
 
             // client.on('send-search-term-client', function(data){
             //     //Set the filter for users for roster controls

@@ -63,15 +63,41 @@ function addToAllUsers(payload){
     }
 }
 
-export function onSendMessage(data) {
+export function onShowNewMessageAction(data) {
   return (dispatch) => {
-    dispatch(addToAllUsers(data));
+    dispatch(onShowNewMessage(data));
   }
 }
 
-function addToAllUsers(payload){
+function onShowNewMessage(payload){
     return {
-      type: "ON_SEND_MESSAGE",
+      type: "ON_SHOW_NEW_MESSAGE",
+      payload
+    }
+}
+
+export function incrementUnreadCountAction(data) {
+  return (dispatch) => {
+    dispatch(incrementUnreadCount(data));
+  }
+}
+
+function incrementUnreadCount(payload){
+    return {
+      type: "ON_INCREMENT_UNREAD",
+      payload
+    }
+}
+
+export function onResetUnreadCountsAction(data) {
+  return (dispatch) => {
+    dispatch(onResetUnreadCounts(data));
+  }
+}
+
+function onResetUnreadCounts(payload){
+    return {
+      type: "ON_UNREAD_RESET_COUNTS",
       payload
     }
 }

@@ -14,6 +14,9 @@ import {
     setActiveConversationAction,
     onLoadRosterAction,
     addToAllUsersAction,
+    onShowNewMessageAction,
+    incrementUnreadCountAction,
+    onResetUnreadCountsAction
     } from "../actions/chatActions";
 
 
@@ -25,6 +28,8 @@ class Chat extends Component {
         this.client.on('load-conversations', this.onLoadConversations);
         this.client.on('load-messages', this.onLoadMessages);
         this.client.on('load-roster', this.onLoadRoster);
+        this.client.on('new-message', this.onNewMessage);
+        this.client.on('reset-unread-counts', this.onResetUnreadCounts);
     }
     
     componentWillMount() {
@@ -41,6 +46,11 @@ class Chat extends Component {
             const activeConversation = this.props.conversations[activeConversationId];
             this.client.getRoster(activeConversation);
             this.client.getMessages(activeConversation);
+            const activeUser = {
+                userId :1
+            }
+
+            this.client.resetUnreadCounts(activeConversation, activeUser);
             this.props.setActiveConversationAction(activeConversation);
         }
     }
@@ -73,15 +83,32 @@ class Chat extends Component {
     }
 
     onLoadMessages = (data) => {
-        this.props.onLoadMessagesAction(data)
+        this.props.onLoadMessagesAction(data);
+    }
+
+    onNewMessage = (newMessage) => {
+        const { activeConversation } = this.props;
+        if(activeConversation.id === newMessage.conversationId){
+            this.props.onShowNewMessageAction(newMessage);
+        } else {
+            this.props.incrementUnreadCountAction(newMessage);
+        }
+    }
+
+    onSendMessage = (data) => {
+        this.client.sendMessage(data);
+    }
+
+    onResetUnreadCounts = (data) => {
+        this.props.onResetUnreadCountsAction(data);
     }
 
     render() {
-        const {conversations, messages, roster, users} = this.props;
+        const {conversations, messages, roster, users, activeConversation} = this.props;
         return (
             <div>
                 <ConversationSidebar conversations={conversations}/>
-                <ConversationMain messages={messages} users={users}/>
+                <ConversationMain messages={messages} users={users} activeConversation={activeConversation} onSendMessage={this.onSendMessage}/>
                 <RosterSidebar roster={roster} users={users}/>
             </div>
         );
@@ -106,7 +133,10 @@ function mapDispatchToProps(dispatch){
         setActiveConversationAction,
         onLoadMessagesAction,
         onLoadRosterAction,
-        addToAllUsersAction
+        addToAllUsersAction,
+        onShowNewMessageAction,
+        incrementUnreadCountAction,
+        onResetUnreadCountsAction
     }, dispatch)
 }
 

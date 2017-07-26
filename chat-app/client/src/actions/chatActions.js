@@ -62,3 +62,16 @@ function addToAllUsers(payload){
       payload
     }
 }
+
+export function onSendMessage(data) {
+  return (dispatch) => {
+    dispatch(addToAllUsers(data));
+  }
+}
+
+function addToAllUsers(payload){
+    return {
+      type: "ON_SEND_MESSAGE",
+      payload
+    }
+}

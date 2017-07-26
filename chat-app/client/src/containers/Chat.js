@@ -77,11 +77,12 @@ class Chat extends Component {
     }
 
     render() {
+        const {conversations, messages, roster, users} = this.props;
         return (
             <div>
-                <ConversationSidebar conversations={this.props.conversations}/>
-                <ConversationMain/>
-                <RosterSidebar roster={this.props.roster} users={this.props.users}/>
+                <ConversationSidebar conversations={conversations}/>
+                <ConversationMain messages={messages} users={users}/>
+                <RosterSidebar roster={roster} users={users}/>
             </div>
         );
     }
@@ -94,6 +95,7 @@ function mapStateToProps(state){
         activeConversation : state.conversationsReducer.activeConversation,
         roster: state.conversationsReducer.roster,
         users: state.usersReducer.users,
+        messages: state.messagesReducer.messages
     }
 }
 

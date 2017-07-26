@@ -12,7 +12,10 @@ class RosterSidebar extends Component {
             )
         } else {
             return(
-                <RosterList users={users} roster={roster}/>
+                <div>
+                Roster:
+                    <RosterList users={users} roster={roster}/>
+                </div>
             )
         }
     }

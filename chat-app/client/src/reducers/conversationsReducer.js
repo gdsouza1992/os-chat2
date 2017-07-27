@@ -33,6 +33,12 @@ export default function(state = {}, action) {
         return data
 
 
+    case "ON_NEW_CONVERSATION_CREATED":
+        const newConversation = action.payload;
+        conversations = _.cloneDeep(state.conversations);
+        conversations[newConversation.id] = newConversation;
+        data = Object.assign({}, state, {'conversations': conversations });
+        return data;
 
 
     // case "ON_SET_CONVERSATIONS":

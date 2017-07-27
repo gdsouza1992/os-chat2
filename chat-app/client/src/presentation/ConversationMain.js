@@ -27,7 +27,7 @@ class ConversationMain extends Component {
             return null;
         }
         return (
-            <MessageComposer onSendMessage={onSendMessage} activeConversation={activeConversation}/>
+            <MessageComposer activeUserId={this.props.activeUserId} onSendMessage={onSendMessage} activeConversation={activeConversation}/>
         );
     }
 

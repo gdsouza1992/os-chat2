@@ -8,7 +8,7 @@ class App extends React.Component {
             <div>
                 <Switch>
                     <Route exact path="/chat/:convoId" component={Chat}/>
-                    <Route exact path="/" component={Chat}/>
+                    <Route exact path="/chat" component={Chat}/>
                 </Switch>
                 <Link to = "/" > HOME </Link>
             </div>

@@ -25,6 +25,10 @@ export default function(state = {}, action) {
         return data;
 
 
+    case "ON_SET_ACTIVE_USER":
+        const activeUserId = action.payload;
+        data = Object.assign({}, state, {'activeUserId': activeUserId});
+        return data;
 
     // case "INIT_DATA_SEARCH":
     //     const searchResults = action.payload;

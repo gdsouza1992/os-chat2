@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
 import Select from 'react-select';
 import SearchUserDropDown from './SearchUserDropDown';
+import ValidationMessage from './ValidationMessage';
 import 'react-select/dist/react-select.css';
+
+const _ = require('lodash');
 
 class NewConversation extends Component {
 
@@ -18,18 +21,14 @@ class NewConversation extends Component {
                 value:'group',
                 label:'Group Messages'
             }
-        ]
+        ],
+        roomMembers: [],
+        validationMsg: ''
 
     }
 
     handleChange = (event) => {
         this.setState({conversationName: event.target.value});
-    }
-
-    handleKeyPress = (event) => {
-      if(event.key === 'Enter'){
-        
-      }
     }
 
     handleClick = (event) => {
@@ -41,7 +40,7 @@ class NewConversation extends Component {
       this.setState({conversationName: ""});
     }
 
-     updateSelection = (roomType) => {
+    updateSelection = (roomType) => {
         this.setState({roomType: roomType});
         if(roomType.value === 'dm' || roomType.value === ''){
             this.setState({isGroup: false})
@@ -50,26 +49,52 @@ class NewConversation extends Component {
         }
     }
 
-    addConversation = () =>{
-        const roomName = this.state.conversationName;
-        const roomPrivacy = this.state.privacy;
-        const roomType = this.state.roomType.value;
-        const activeUser = this.props.activeUserId;
-        
-        // this.props.client.addNewConversation(roomName, roomPrivacy, roomType, activeUser);
-
-        this.setState({ 'conversationName' : '' });
-        this.setState({ 'privacy' : false });
-        this.setState({ 'roomType' : '' });
+    setRoomMembers = (members) => {
+        this.setState({roomMembers:members});
     }
 
-    showGroupControls = () => {
-        const { roomType } = this.state;
-
-        if(roomType === 'dm' || roomType === ''){
-            return null;
+    validateForm = (data) => {
+        const {name, type, members} = data;
+        let validationMsg = '';
+        if(_.isEmpty(name)){
+            validationMsg += 'Room name is required\n'
+        }
+        if(_.isEmpty(type)){
+            validationMsg += 'Room type is required\n'
+        }
+        if(_.isEmpty(members)){
+            validationMsg += 'At least one member is required\n'
         }
 
+        if(validationMsg !== ''){
+            this.setState({validationMsg: validationMsg});
+            return false;
+        }
+
+        
+        return true;
+    }
+
+    addConversation = () =>{
+        const user = {
+            userId : this.props.activeUserId
+        }
+        
+        // this.props.client.addNewConversation(roomName, roomPrivacy, roomType, activeUser);
+        const data = {
+            name: this.state.conversationName,
+            privacy: this.state.privacy,
+            type: this.state.roomType.value,
+            user: user,
+            members: this.state.roomMembers
+        }
+
+        if(this.validateForm(data)){
+            this.props.onNewConversation(data)
+            this.setState({ 'conversationName' : '' });
+            this.setState({ 'privacy' : false });
+            this.setState({ 'roomType' : '' });
+        } 
     }
 
 
@@ -78,9 +103,9 @@ class NewConversation extends Component {
         return(
             <div>
                 Room Name:
-                <input id="conversationName" value={this.state.conversationName} onChange={this.handleChange} onKeyPress={this.handleKeyPress}/>
+                <input value={this.state.conversationName} onChange={this.handleChange}/>
                 Private:
-                <input id="conversationPrivacy" type="checkbox" checked={this.state.privacy} onClick={this.handleClick}/>
+                <input type="checkbox" checked={this.state.privacy} onClick={this.handleClick}/>
                 Type:
                 
                 <Select
@@ -89,8 +114,9 @@ class NewConversation extends Component {
                     options={this.state.roomTypeOptions}
                     onChange={this.updateSelection}
                 />
-                <SearchUserDropDown searchResults={this.props.searchResults} isMultiple={this.state.isGroup} onSearch={this.props.onSearch}/>
-                <button id="AddConversationSubmit" onClick={this.addConversation}>
+                <SearchUserDropDown setSelection={this.setRoomMembers} searchResults={this.props.searchResults} isMultiple={this.state.isGroup} onSearch={this.props.onSearch}/>
+                <ValidationMessage validationMessage={this.state.validationMsg}/>
+                <button onClick={this.addConversation}>
                     Add
                 </button>
             </div>

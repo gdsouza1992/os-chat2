@@ -33,6 +33,7 @@ class SearchUserDropDown extends React.Component {
 
     handleSelectChange = (value) => {
         this.setState({value});
+        this.props.setSelection(value) 
     }
 
     transformSearchResults = (data) => {

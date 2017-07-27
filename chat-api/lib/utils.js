@@ -34,6 +34,20 @@ utils.makeMessagesObjects = (messagesArray) => {
     }
 }
 
+// utils.makeGroupMembers = (groupMembers) => {
+//     return {
+//             groupMembers: memberArray.map(function(member){
+//                 const user = {}
+//                 user.id = member.userId
+//                 delete member.userId
+//                 user.username = member.username
+//                 delete member.username
+//                 member.user = user
+//                 return member;
+//             })
+//         }
+//     }
+
     // return memberArray.map(function(member){
     //             const user = {}
     //             user.id = member.userId

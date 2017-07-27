@@ -29,7 +29,7 @@ class MessageComposer extends Component {
                 message: message,
                 conversation: this.props.activeConversation,
                 user: {
-                    userId : 1
+                    userId : this.props.activeUserId
                 }
             }
             this.props.onSendMessage(data);

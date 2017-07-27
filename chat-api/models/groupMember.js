@@ -7,7 +7,8 @@ const Conversation = require('./conversation');
 
 const GroupMember = sequelize.define('groupMember', {
         unread: {
-            type: DataTypes.INTEGER
+            type: DataTypes.INTEGER,
+            defaultValue: 0
         },
         createdAt: {
             type: DataTypes.DATE,

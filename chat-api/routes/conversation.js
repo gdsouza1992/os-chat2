@@ -12,7 +12,7 @@ router.route('/')
 .post(function(req, res) {
     var name = req.body.name;
     var privacy = req.body.privacy;
-    var conversationType = req.body.conversationType;
+    var conversationType = req.body.type;
     var conversation = Conversation.build();
     conversation._modelOptions.instanceMethods.add(name, privacy, conversationType)
     .then((data) => {

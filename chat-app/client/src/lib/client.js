@@ -6,6 +6,7 @@ class Client extends EventEmitter {
 
     connect(){
         this.socket = io.connect('http://192.168.6.198:3001');
+        // this.socket = io.connect('http://192.168.0.12:3001');
 
         this.socket.on('load-messages-server', (data) => {
             this.emit('load-messages',data);
@@ -37,9 +38,10 @@ class Client extends EventEmitter {
     //         this.emit('load-suggestions-search', data);
     //     })
 
-    //     this.socket.on('send-update-roster-server', (data) => {
-    //         this.emit('load-roster-updates', data);
-    //     });
+        this.socket.on('new-conversation-server', (data) => {
+            this.emit('subscribe-new-conversation', data);
+            this.emit('new-conversation', data);
+        });
 
         this.socket.on('search-results-server', (data) => {
             this.emit('search-results', data);
@@ -95,6 +97,14 @@ class Client extends EventEmitter {
 
     search(data){
         this.socket.emit('search-results', data);
+    }
+
+    attachUserToSocket(user){
+        this.socket.emit('attach-user-client', user);
+    }
+
+    subscribeToNewConversation(conversation){
+        this.socket.emit('subscribe-conversation', conversation);
     }
 
     // fetchRoster(conversationId){

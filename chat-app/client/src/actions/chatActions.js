@@ -115,3 +115,34 @@ function onSearchResults(payload){
       payload
     }
 }
+
+export function onNewConversationCreatedAction(data) {
+  return (dispatch) => {
+    dispatch(onNewConversationCreated(data));
+  }
+}
+
+function onNewConversationCreated(payload){
+    return {
+      type: "ON_NEW_CONVERSATION_CREATED",
+      payload
+    }
+}
+
+export function setActiveUserAction(data) {
+  return (dispatch) => {
+    dispatch(setActiveUser(data));
+  }
+}
+
+function setActiveUser(payload){
+    return {
+      type: "ON_SET_ACTIVE_USER",
+      payload
+    }
+}
+
+
+
+
+

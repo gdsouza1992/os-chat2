@@ -15,12 +15,7 @@ class Conversations {
 
     addNewConversation(data){
         const apiUrl = 'http://localhost:3002/api';
-        return axios.post(apiUrl + '/conversation/', {
-            name: data.conversationName,
-            privacy: data.conversationPrivacy,
-            conversationType: data.conversationType,
-            role: data.conversationRole
-        });
+        return axios.post(apiUrl + '/conversation/', data);
     }
 }
 

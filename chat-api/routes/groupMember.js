@@ -48,6 +48,41 @@ router.route('/reset')
 // on routes that end in /groupMember/:group_id or /groupMembers/:group_id
 // ----------------------------------------------------
 router.route('/:conversation_id')
+.post(function(req, res) {
+
+    const newGroupMembers = req.body.groupMembers;
+
+    GroupMember.bulkCreate(newGroupMembers)
+    .then((data) => { // Notice: There are no arguments here, as of right now you'll have to...
+        res.json(data)
+    })
+    .catch((error) => {
+        res.send("Unread count could not be reset.");
+    });
+    
+
+    // var conversation = Conversation.build();
+    // conversation.name = req.body.name;
+    // conversation.privacy = req.body.privacy;
+    // conversation.conversationType = req.body.conversationType;
+    // conversation._modelOptions.instanceMethods.updateById(req.params.conversation_id)
+    // // .then((data) => {
+      // res.json({ message: 'Conversation updated!' });
+    // })
+    // .catch((error) => {
+      // res.json(newGroupMembers);
+    // });
+    // conversation.updateById(req.params.conversation_id, function(success) {
+    //     if (success) {
+    //         res.json({ message: 'Conversation updated!' });
+    //     } else {
+    //       res.send(401, "Conversation not found");
+    //     }
+    //   }, function(error) {
+    //       res.send("Conversation not found");
+    //   });
+})
+
 
 // update a group where conversation id and user id given
 .put(function(req, res) {

@@ -2,6 +2,8 @@ const restApi = require('../api');
 const utils = require('./utils');
 const bot = require('./messageProcessor');
 
+const _ = require('lodash');
+
 class Socket{
 
     constructor(socketio){
@@ -22,7 +24,6 @@ class Socket{
 
         server.on('connection',function(client) {
             console.info('Client connected (id=' + client.id + ').');
-            clients.push(client);
 
             // client.on('subscribe', (data) => {
             //     room = data.room
@@ -33,6 +34,13 @@ class Socket{
             // client.on('unsubscribe', () => { socket.leave(room)
             //     console.log('leaving room', room)
             // })
+
+            client.on('attach-user-client', function(data){
+                const clientObj = {}
+                clientObj.user = data;
+                clientObj.clientId = client.id;
+                clients.push(clientObj);
+            });
 
             client.on('load-conversations', function (data) {
                 Conversations.getConversationsByUser(data)
@@ -79,7 +87,6 @@ class Socket{
                 Messages.addMessageToConversationByUserId(data)
                 .then((response) => {
                     if(response.status === 200){
-                        console.log(response.data);
                         const newMessage = response.data;
                         server.to(`conversation:${data.conversation.id}`).emit('new-message-server', newMessage);
                     } else {
@@ -96,7 +103,6 @@ class Socket{
                 GroupMembers.resetUnreadCount(groupMemberData)
                 .then((response)=>{
                     const results = response.data;
-                    console.log(results);
                     server.to(client.id).emit('reset-unread-counts-server',results);
                 })
                 .catch((err) => {
@@ -110,7 +116,6 @@ class Socket{
                 Search.getSearchData(data)
                 .then((response) => {
                     const results = {results: response.data, filter: data.filter};
-                    console.log(results);
                     server.to(client.id).emit('search-results-server',results);
                 })
                 .catch((err) => {
@@ -180,43 +185,69 @@ class Socket{
 
             // });
 
+            client.on('subscribe-conversation', function(conversation){
+                client.join(`conversation:${conversation.id}`);
+            })
+                                
 
-            // client.on('send-add-new-conversation-client', function(data){
-            //     // const data = {
-            //     //     conversation : {conversationName, conversationPrivacy, conversationType}
-            //     //     userId : userId
-            //     // };
 
-            //     Conversations.addNewConversation(data.conversation)
-            //     .then((response) => {
-            //         console.log("Added a new conversation");
-            //         //Add the creator to group
-            //         const groupMember = { userId: data.userId, conversationId: response.data.id };
-            //         if(response.status === 200){
-            //             groupMember.role = 'admin';
-            //             GroupMembers.addUserToGroup(groupMember)
-            //             .then((response) => {
-            //                 if(response.status === 200){
 
-            //                     const result = {
-            //                         conversationId: groupMember.conversationId,
-            //                         user: response.data
-            //                     };
-            //                     console.log(result);
-            //                     bot.sendMessage(server, result.conversationId, 'addUserToGroup',result.user);
 
-            //                     const updateConversationUserId = {userId : result.user.id};
-            //                     server.to(client.id).emit('send-conversation-list-updated-server', updateConversationUserId);
+            client.on('new-conversation', function(data){
+                const {name, privacy, type, user, members} = data;
 
-            //                 }
-            //             })
-            //         }
-            //     })
-            //     .catch((err) => {
-            //         const error = {messages : 'Error in getting search data', err}
-            //         server.emit('send-error-server', error);
-            //     })
-            // })
+                const conversation = {
+                    name,
+                    privacy,
+                    type
+                }
+
+                let newConversation = {};
+
+                //Create new covnersation in DB
+                Conversations.addNewConversation(conversation)
+                .then((response) => {
+
+                    //Add the creator to group
+                    const conversationId = response.data.id;
+                    newConversation = utils.makeConversationObject(response.data)
+                    const groupMembers = [{ userId: user.userId, conversationId: conversationId, role:'admin' }];
+                    
+                    //get the array of founding members
+                    const membersArr = utils.isArray(members) ? members : [members];
+
+                    //make memberObjecsts from membersArr
+                    _.forEach(membersArr, function(user) {
+                        const newMember = {userId:user.value, conversationId:conversationId, role:'contributor'}
+                        groupMembers.push(newMember);
+                    });
+
+
+                    if(response.status === 200){
+
+                        //Add the members to the db
+                        GroupMembers.addUsersToGroup(groupMembers, conversationId)
+                        .then((response) => {
+
+                            if(response.status === 200){
+                                
+                                const onlineClients = utils.filterOnlineUsers(groupMembers, clients);
+                                _.forEach(onlineClients, function(onlineClient){
+                                    server.to(onlineClient.clientId).emit('new-conversation-server', newConversation);
+                                });
+                            }
+                        })
+                        .catch((err) => {
+                            const error = {messages : 'Error in getting search data', err}
+                            server.emit('send-error-server', error);
+                        })
+                    }
+                })
+                .catch((err) => {
+                    const error = {messages : 'Error in getting search data', err}
+                    server.emit('send-error-server', error);
+                })
+            })
 
             client.on('disconnect', function(){
                 var index = clients.indexOf(client);

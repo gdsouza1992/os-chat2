@@ -6,7 +6,7 @@ class GroupMembers {
         // console.log('POST ' + apiUrl + '/message/' + data.conversationId);
         return axios.post(apiUrl + '/groupMember/reset', {
             conversationId: data.conversation.id,
-            userId: data.user.id
+            userId: data.user.userId
         });
     }
 
@@ -22,6 +22,14 @@ class GroupMembers {
         return axios.post(apiUrl + '/groupMember/user/' + data.userId, {
             conversationId: data.conversationId,
             role: data.role
+        });
+    }
+
+    addUsersToGroup(groupMembers, conversationId){
+        const apiUrl = 'http://localhost:3002/api';
+        // console.log('POST ' + apiUrl + '/message/' + data.conversationId);
+        return axios.post(apiUrl + '/groupMember/' + conversationId, {
+            groupMembers: groupMembers
         });
     }
 

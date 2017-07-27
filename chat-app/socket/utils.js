@@ -18,9 +18,29 @@ utils.makeConversationObjects = (conversations) => {
     })
 }
 
-// utils.getRoomsFromORM(rooms){
+utils.makeConversationObject = (conversation) => {
+    conversation.role = '';
+    conversation.unread = 0;
+    return conversation;
+}
 
-// }
+utils.isArray = function(a) {
+    return (!!a) && (a.constructor === Array);
+};
+
+utils.filterOnlineUsers = function(users, clients) {
+
+    const clientUsers = _.keyBy(clients, client => client.user.userId)
+    const onlineUsers = users.filter((user) => {
+        return (clientUsers[user.userId])
+    })
+
+    const onlineClients = onlineUsers.map((user) => {
+        return clientUsers[user.userId]
+    })
+
+    return onlineClients;
+}
 
 
 module.exports = utils;

@@ -5,6 +5,9 @@ import ConversationMain from '../presentation/ConversationMain'
 import RosterSidebar from '../presentation/RosterSidebar'
 import NewConversation from '../components/NewConversation'
 
+import ActiveUser from './ActiveUser'
+import SetupChat from './SetupChat'
+
 
 import Client from '../lib/client';
 
@@ -19,9 +22,13 @@ import {
     onShowNewMessageAction,
     incrementUnreadCountAction,
     onResetUnreadCountsAction,
-    onSearchResultsAction
+    onSearchResultsAction,
+    onNewConversationCreatedAction,
+    setActiveUserAction
     } from "../actions/chatActions";
 
+
+const _ = require('lodash');
 
 class Chat extends Component {
 
@@ -34,14 +41,12 @@ class Chat extends Component {
         this.client.on('new-message', this.onNewMessage);
         this.client.on('reset-unread-counts', this.onResetUnreadCounts);
         this.client.on('search-results', this.onSearchResults);
+        this.client.on('new-conversation', this.onNewConversationCreated);
+        this.client.on('subscribe-new-conversation', this.onSubscribeNewConversation);
     }
     
     componentWillMount() {
         this.client.connect();
-        const data = {
-            userId :1
-        }
-        this.client.getConversations(data);
     }
 
     componentDidUpdate(prevProps){
@@ -51,7 +56,7 @@ class Chat extends Component {
             this.client.getRoster(activeConversation);
             this.client.getMessages(activeConversation);
             const activeUser = {
-                userId :1
+                userId : this.props.activeUserId
             }
 
             this.client.resetUnreadCounts(activeConversation, activeUser);
@@ -92,9 +97,12 @@ class Chat extends Component {
 
     onNewMessage = (newMessage) => {
         const { activeConversation } = this.props;
-        if(activeConversation.id === newMessage.conversationId){
+
+        //if current Chat is opened
+        if(!_.isEmpty(activeConversation) && activeConversation.id === newMessage.conversationId){
             this.props.onShowNewMessageAction(newMessage);
         } else {
+        //if current chat is not opened
             this.props.incrementUnreadCountAction(newMessage);
         }
     }
@@ -108,7 +116,16 @@ class Chat extends Component {
     }
 
     onNewConversation = (data) => {
+        console.log(data);
         this.client.createNewConversation(data);
+    }
+
+    onNewConversationCreated = (data) => {
+        this.props.onNewConversationCreatedAction(data);
+    }
+
+    onSubscribeNewConversation = (data) => {
+        this.client.subscribeToNewConversation(data);
     }
 
     onSearch = (data) => {
@@ -119,14 +136,34 @@ class Chat extends Component {
         this.props.onSearchResultsAction(data);
     }
 
+    onSetActiveUser = (data) => {
+        this.props.setActiveUserAction(data);
+    }
+
+    onSetupChat = (data) => {
+        if(!_.isEmpty(this.props.activeUserId)){
+            const data = {
+                userId : this.props.activeUserId
+            }
+            this.client.attachUserToSocket(data);
+            this.client.getConversations(data);
+        }
+    }
+
+
+
     render() {
         const {conversations, messages, roster, users, activeConversation} = this.props;
         return (
             <div>
+                --------------------------------------
+                <ActiveUser onSetActiveUser={this.onSetActiveUser}/>
+                <SetupChat onSetupChat={this.onSetupChat}/>
+                --------------------------------------
                 <ConversationSidebar conversations={conversations}/>
-                <ConversationMain messages={messages} users={users} activeConversation={activeConversation} onSendMessage={this.onSendMessage}/>
+                <ConversationMain activeUserId={this.props.activeUserId} messages={messages} users={users} activeConversation={activeConversation} onSendMessage={this.onSendMessage}/>
                 <RosterSidebar roster={roster} users={users}/>
-                <NewConversation onNewConversation={this.onNewConversation} onSearch={this.onSearch} searchResults={this.props.searchResults}/>
+                <NewConversation activeUserId={this.props.activeUserId} onNewConversation={this.onNewConversation} onSearch={this.onSearch} searchResults={this.props.searchResults}/>
             </div>
         );
     }
@@ -137,6 +174,7 @@ function mapStateToProps(state){
     return {
         conversations: state.conversationsReducer.conversations,
         activeConversation : state.conversationsReducer.activeConversation,
+        activeUserId : state.usersReducer.activeUserId,
         roster: state.conversationsReducer.roster,
         users: state.usersReducer.users,
         messages: state.messagesReducer.messages,
@@ -155,7 +193,9 @@ function mapDispatchToProps(dispatch){
         onShowNewMessageAction,
         incrementUnreadCountAction,
         onResetUnreadCountsAction,
-        onSearchResultsAction
+        onSearchResultsAction,
+        onNewConversationCreatedAction,
+        setActiveUserAction,
     }, dispatch)
 }
 

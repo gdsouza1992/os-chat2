@@ -101,3 +101,17 @@ function onResetUnreadCounts(payload){
       payload
     }
 }
+
+
+export function onSearchResultsAction(data) {
+  return (dispatch) => {
+    dispatch(onSearchResults(data));
+  }
+}
+
+function onSearchResults(payload){
+    return {
+      type: "ON_SEARCH_RESULTS",
+      payload
+    }
+}

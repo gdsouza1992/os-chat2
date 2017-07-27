@@ -3,6 +3,8 @@ import React, {Component} from 'react';
 import ConversationSidebar from '../presentation/ConversationSidebar'
 import ConversationMain from '../presentation/ConversationMain'
 import RosterSidebar from '../presentation/RosterSidebar'
+import NewConversation from '../components/NewConversation'
+
 
 import Client from '../lib/client';
 
@@ -16,7 +18,8 @@ import {
     addToAllUsersAction,
     onShowNewMessageAction,
     incrementUnreadCountAction,
-    onResetUnreadCountsAction
+    onResetUnreadCountsAction,
+    onSearchResultsAction
     } from "../actions/chatActions";
 
 
@@ -30,6 +33,7 @@ class Chat extends Component {
         this.client.on('load-roster', this.onLoadRoster);
         this.client.on('new-message', this.onNewMessage);
         this.client.on('reset-unread-counts', this.onResetUnreadCounts);
+        this.client.on('search-results', this.onSearchResults);
     }
     
     componentWillMount() {
@@ -103,6 +107,18 @@ class Chat extends Component {
         this.props.onResetUnreadCountsAction(data);
     }
 
+    onNewConversation = (data) => {
+        this.client.createNewConversation(data);
+    }
+
+    onSearch = (data) => {
+        this.client.search(data)
+    }
+
+    onSearchResults = (data) => {
+        this.props.onSearchResultsAction(data);
+    }
+
     render() {
         const {conversations, messages, roster, users, activeConversation} = this.props;
         return (
@@ -110,6 +126,7 @@ class Chat extends Component {
                 <ConversationSidebar conversations={conversations}/>
                 <ConversationMain messages={messages} users={users} activeConversation={activeConversation} onSendMessage={this.onSendMessage}/>
                 <RosterSidebar roster={roster} users={users}/>
+                <NewConversation onNewConversation={this.onNewConversation} onSearch={this.onSearch} searchResults={this.props.searchResults}/>
             </div>
         );
     }
@@ -122,7 +139,8 @@ function mapStateToProps(state){
         activeConversation : state.conversationsReducer.activeConversation,
         roster: state.conversationsReducer.roster,
         users: state.usersReducer.users,
-        messages: state.messagesReducer.messages
+        messages: state.messagesReducer.messages,
+        searchResults: state.searchReducer.searchResults
     }
 }
 
@@ -136,7 +154,8 @@ function mapDispatchToProps(dispatch){
         addToAllUsersAction,
         onShowNewMessageAction,
         incrementUnreadCountAction,
-        onResetUnreadCountsAction
+        onResetUnreadCountsAction,
+        onSearchResultsAction
     }, dispatch)
 }
 

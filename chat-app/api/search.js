@@ -11,7 +11,7 @@ class Search {
             return {error: "No search term"};
         }
 
-        console.log(filter);
+        
 
         if(filter !== ''){
             return axios.get(apiUrl + '/search/' + filter + '/' + term);

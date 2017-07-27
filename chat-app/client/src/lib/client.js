@@ -41,9 +41,9 @@ class Client extends EventEmitter {
     //         this.emit('load-roster-updates', data);
     //     });
 
-    //     this.socket.on('send-user-conversation-role-server', (data) => {
-    //         this.emit('load-user-conversation-role', data);
-    //     })
+        this.socket.on('search-results-server', (data) => {
+            this.emit('search-results', data);
+        })
 
         this.socket.on('load-conversations-server', (data) => {
             this.emit('load-conversations', data);
@@ -87,6 +87,14 @@ class Client extends EventEmitter {
             user: activeUser
         }
         this.socket.emit('reset-unread-counts', data)
+    }
+
+    createNewConversation(data){
+        this.socket.emit('new-conversation', data);
+    }
+
+    search(data){
+        this.socket.emit('search-results', data);
     }
 
     // fetchRoster(conversationId){

@@ -93,7 +93,6 @@ class Socket{
             })
 
             client.on('reset-unread-counts', function(groupMemberData){
-                console.log(groupMemberData);
                 GroupMembers.resetUnreadCount(groupMemberData)
                 .then((response)=>{
                     const results = response.data;
@@ -104,7 +103,21 @@ class Socket{
                     const error = {messages : 'Error in resetting conversation unread count', err}
                     server.emit('send-error-server', error);
                 })
-            })
+            });
+
+            client.on('search-results', function(data){
+
+                Search.getSearchData(data)
+                .then((response) => {
+                    const results = {results: response.data, filter: data.filter};
+                    console.log(results);
+                    server.to(client.id).emit('search-results-server',results);
+                })
+                .catch((err) => {
+                    const error = {messages : 'Error in getting search data', err}
+                    server.emit('send-error-server', error);
+                })
+            });
 
             // client.on('send-search-term-client', function(data){
             //     //Set the filter for users for roster controls

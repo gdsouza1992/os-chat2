@@ -23,7 +23,8 @@ class NewConversation extends Component {
             }
         ],
         roomMembers: [],
-        validationMsg: ''
+        validationMsg: '',
+        submitSuccess: false,
 
     }
 
@@ -91,10 +92,16 @@ class NewConversation extends Component {
 
         if(this.validateForm(data)){
             this.props.onNewConversation(data)
-            this.setState({ 'conversationName' : '' });
-            this.setState({ 'privacy' : false });
-            this.setState({ 'roomType' : '' });
-        } 
+            this.setState({'submitSuccess': true});
+        }
+    }
+
+    clearFields = () => {
+        this.setState({ 'conversationName' : '' });
+        this.setState({ 'privacy' : false });
+        this.setState({ 'roomType' : '' });
+        this.setState({ 'roomMembers' : [] });
+        this.setState({'submitSuccess': false});
     }
 
 
@@ -114,7 +121,7 @@ class NewConversation extends Component {
                     options={this.state.roomTypeOptions}
                     onChange={this.updateSelection}
                 />
-                <SearchUserDropDown setSelection={this.setRoomMembers} searchResults={this.props.searchResults} isMultiple={this.state.isGroup} onSearch={this.props.onSearch}/>
+                <SearchUserDropDown setSelection={this.setRoomMembers} searchResults={this.props.searchResults} isMultiple={this.state.isGroup} onSearch={this.props.onSearch} submitSuccess={this.state.submitSuccess} clearFields={this.clearFields}/>
                 <ValidationMessage validationMessage={this.state.validationMsg}/>
                 <button onClick={this.addConversation}>
                     Add

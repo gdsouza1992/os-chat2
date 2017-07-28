@@ -1,7 +1,4 @@
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 
@@ -12,23 +9,6 @@ class SearchUserDropDown extends React.Component {
 
     state = {
         searchOptions: []
-    }
-
-    constructor(props){
-        super(props);
-    }
-
-    componentWillReceiveProps(newProps){
-        
-    }
-
-
-    onLoadSearchResults = (data) => {
-        
-    }
-
-    updateSelection = (value) => {
-
     }
 
     handleSelectChange = (value) => {
@@ -63,9 +43,15 @@ class SearchUserDropDown extends React.Component {
         return;
     }
 
-    addUser = () => {
+    componentWillReceiveProps = (nextProps) => {
 
+        //Clear the select on success
+        if(nextProps.submitSuccess){
+            this.setState({value: null});
+            this.props.clearFields();
+        }
     }
+
 
     render() {
         return(

@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import RosterList from '../containers/RosterList';
+// import SearchUserDropDown from '../components/SearchUserDropDown';
+
 const _ = require('lodash');
 
 class RosterSidebar extends Component {
@@ -15,6 +17,7 @@ class RosterSidebar extends Component {
                 <div>
                 Roster:
                     <RosterList users={users} roster={roster}/>
+                    
                 </div>
             )
         }

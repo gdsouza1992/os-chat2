@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 export default function(state = {}, action) {
     let data;
     let users;

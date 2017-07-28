@@ -116,6 +116,19 @@ function onSearchResults(payload){
     }
 }
 
+export function clearSearchResultsAction(data) {
+  return (dispatch) => {
+    dispatch(clearSearchResults(data));
+  }
+}
+
+function clearSearchResults(payload){
+    return {
+      type: "CLEAR_SEARCH_RESULTS",
+      payload
+    }
+}
+
 export function onNewConversationCreatedAction(data) {
   return (dispatch) => {
     dispatch(onNewConversationCreated(data));

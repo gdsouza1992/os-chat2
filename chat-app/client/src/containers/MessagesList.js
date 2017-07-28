@@ -5,7 +5,7 @@ const _ = require('lodash');
 class MessagesList extends Component {
     
     renderMessages = () => {
-        const {messages, users} = this.props;
+        const {messages} = this.props;
         return _.values(messages).map((message) => {
             return(
                 <li key={message.id}>

@@ -23,8 +23,9 @@ import {
     incrementUnreadCountAction,
     onResetUnreadCountsAction,
     onSearchResultsAction,
+    clearSearchResultsAction,
     onNewConversationCreatedAction,
-    setActiveUserAction
+    setActiveUserAction,
     } from "../actions/chatActions";
 
 
@@ -64,24 +65,6 @@ class Chat extends Component {
         }
     }
 
-    // componentWillReceiveProps(newProps){
-    //     // const conversationId = newProps.match.params['convoId'];
-
-    //     // if(conversationId === undefined){
-    //     //     return;
-    //     // }
-
-    //     // //First time a chat is opened 
-    //     // if(!this.state.loadedMessages){
-    //     //     this.fetchConversationComponents(conversationId);
-    //     // }
-
-    //     // //Every time a conversation is changed 
-    //     // if(conversationId !== this.state.currentConversationId){
-    //     //     this.fetchConversationComponents(conversationId);
-    //     // }
-    // }
-
     onLoadConversations = (data) => {
         this.props.onLoadConversationsAction(data)
     }
@@ -97,12 +80,9 @@ class Chat extends Component {
 
     onNewMessage = (newMessage) => {
         const { activeConversation } = this.props;
-
-        //if current Chat is opened
         if(!_.isEmpty(activeConversation) && activeConversation.id === newMessage.conversationId){
             this.props.onShowNewMessageAction(newMessage);
         } else {
-        //if current chat is not opened
             this.props.incrementUnreadCountAction(newMessage);
         }
     }
@@ -118,10 +98,12 @@ class Chat extends Component {
     onNewConversation = (data) => {
         console.log(data);
         this.client.createNewConversation(data);
+
     }
 
     onNewConversationCreated = (data) => {
         this.props.onNewConversationCreatedAction(data);
+        this.props.clearSearchResultsAction();
     }
 
     onSubscribeNewConversation = (data) => {
@@ -194,6 +176,7 @@ function mapDispatchToProps(dispatch){
         incrementUnreadCountAction,
         onResetUnreadCountsAction,
         onSearchResultsAction,
+        clearSearchResultsAction,
         onNewConversationCreatedAction,
         setActiveUserAction,
     }, dispatch)

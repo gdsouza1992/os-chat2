@@ -17,6 +17,10 @@ export default function(state = {}, action) {
         data = Object.assign({}, state, {'searchResults': searchResults});
         return data;
 
+    case "CLEAR_SEARCH_RESULTS":
+        data = Object.assign({}, state, {'searchResults': []});
+        return data;
+
     default:
       return state;
   }

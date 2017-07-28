@@ -27,7 +27,7 @@ class MessageComposer extends Component {
         if(message !== ''){
             const data = {
                 message: message,
-                conversation: this.props.activeConversation,
+                conversation: conversationId,
                 user: {
                     userId : this.props.activeUserId
                 }

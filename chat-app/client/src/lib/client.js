@@ -12,19 +12,9 @@ class Client extends EventEmitter {
             this.emit('load-messages',data);
         });
 
-
-
         this.socket.on('new-message-server', (data) => {
             this.emit('new-message',data);
         })
-
-    //     this.socket.on('send-conversation-list-updated-server', (data) => {
-    //         this.fetchConversations(data.userId);
-    //     });
-
-    //     this.socket.on('send-conversations-server', (data) => {
-    //         this.emit('load-conversations-client-success', data);
-    //     });
 
         this.socket.on('reset-unread-counts-server', (data) => {
             this.emit('reset-unread-counts', data);
@@ -33,10 +23,6 @@ class Client extends EventEmitter {
         this.socket.on('load-roster-server', (data) => {
             this.emit('load-roster', data);
         });
-
-    //     this.socket.on('send-search-data-server', (data) => {
-    //         this.emit('load-suggestions-search', data);
-    //     })
 
         this.socket.on('new-conversation-server', (data) => {
             this.emit('subscribe-new-conversation', data);
@@ -52,11 +38,6 @@ class Client extends EventEmitter {
         })
 
     }
-
-    // resetUnreadCounts(userId,conversationId){
-    //     const data = {userId, conversationId};
-    //     this.socket.emit('send-reset-unread-count-client', data);
-    // }
 
     getConversations(data){
         if(_.isEmpty(data)){
@@ -106,42 +87,6 @@ class Client extends EventEmitter {
     subscribeToNewConversation(conversation){
         this.socket.emit('subscribe-conversation', conversation);
     }
-
-    // fetchRoster(conversationId){
-    //     const data = {conversationId};
-    //     this.socket.emit('load-conversation-roster-client', data);
-    // }
-
-    // fetchUserRoleForConversation(conversationId, userId){
-    //     console.log("CalledfetchUserRoleForConversation");
-    //     const data = {conversationId, userId};
-    //     console.log(data)
-    //     this.socket.emit('load-role-conversation-client', data);
-    // }
-
-    // sendMessage(userId, conversationId, message){
-    //     const data = {userId, conversationId, message};
-    //     this.socket.emit('send-message-client', data);
-    // }
-
-    // search(term, filterType){
-    //     const data = {term: term, filter: filterType};
-    //     this.socket.emit('send-search-term-client', data);
-    // }
-
-    // addUserToGroup(userId, conversationId){
-    //     const data = {userId, conversationId, };
-    //     this.socket.emit('send-add-user-to-group-client', data);
-    // }
-
-    // addNewConversation(conversationName, conversationPrivacy, conversationType, userId){
-    //     const data = {
-    //         conversation : {conversationName, conversationPrivacy, conversationType},
-    //         userId : userId
-    //     };
-    //     this.socket.emit('send-add-new-conversation-client', data);
-    // }
-
 
 }
 

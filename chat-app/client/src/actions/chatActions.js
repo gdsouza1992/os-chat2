@@ -155,6 +155,19 @@ function setActiveUser(payload){
     }
 }
 
+export function removeUserFromRosterAction(data) {
+  return (dispatch) => {
+    dispatch(removeUserFromRoster(data));
+  }
+}
+
+function removeUserFromRoster(payload){
+    return {
+      type: "ON_REMOVE_FROM_ROSTER",
+      payload
+    }
+}
+
 
 
 

@@ -37,6 +37,12 @@ class Client extends EventEmitter {
             this.emit('load-conversations', data);
         })
 
+        this.socket.on('leave-conversation-server', (data) => {
+            console.log(data);
+            console.log("leave-conversation HERE")
+            this.emit('leave-conversation', data);
+        })
+
     }
 
     getConversations(data){
@@ -86,6 +92,10 @@ class Client extends EventEmitter {
 
     subscribeToNewConversation(conversation){
         this.socket.emit('subscribe-conversation', conversation);
+    }
+
+    leaveConversation(data){
+        this.socket.emit('leave-conversation', data);
     }
 
 }

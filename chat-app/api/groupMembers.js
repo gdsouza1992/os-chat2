@@ -25,6 +25,16 @@ class GroupMembers {
         });
     }
 
+    removeUserFromGroup(data){
+        console.log(data);
+        const apiUrl = 'http://localhost:3002/api';
+        // console.log('POST ' + apiUrl + '/message/' + data.conversationId);
+        return axios.post(apiUrl + '/groupMember/user/delete/' + data.user.userId, {
+            conversationId: data.conversation.id,
+            newAdmin: data.newAdmin
+        });
+    }
+
     addUsersToGroup(groupMembers, conversationId){
         const apiUrl = 'http://localhost:3002/api';
         // console.log('POST ' + apiUrl + '/message/' + data.conversationId);
@@ -33,13 +43,13 @@ class GroupMembers {
         });
     }
 
-    removeUserFromGroup(data){
-        const apiUrl = 'http://localhost:3002/api';
-        // console.log('POST ' + apiUrl + '/message/' + data.conversationId);
-        return axios.delete(apiUrl + '/groupMember/user/' + data.userId, {
-            conversationId: data.conversationId,
-        });
-    }
+    // removeUserFromGroup(data){
+    //     const apiUrl = 'http://localhost:3002/api';
+    //     // console.log('POST ' + apiUrl + '/message/' + data.conversationId);
+    //     return axios.delete(apiUrl + '/groupMember/user/' + data.userId, {
+    //         conversationId: data.conversationId,
+    //     });
+    // }
 
     getUserRole(data){
         const apiUrl = 'http://localhost:3002/api';

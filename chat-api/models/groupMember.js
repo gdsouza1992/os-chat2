@@ -21,6 +21,10 @@ const GroupMember = sequelize.define('groupMember', {
         role: {
             type: DataTypes.STRING,
             defaultValue: "pending"
+        },
+        deleted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
   }, {
     instanceMethods: {
@@ -70,6 +74,11 @@ const GroupMember = sequelize.define('groupMember', {
       },
       setUnreadCount: function(conversationId,userId,count = 0){
         const updatedData = {unread: count};
+        return GroupMember.update(updatedData, {where: {conversationId: conversationId, userId: userId}});
+      },
+      setSoftDelete: function(conversationId, userId){
+        const updatedData = {deleted: true};
+        console.log('Hit here with', updatedData,conversationId,userId);
         return GroupMember.update(updatedData, {where: {conversationId: conversationId, userId: userId}});
       }
 

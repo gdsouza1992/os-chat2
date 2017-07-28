@@ -4,6 +4,7 @@ import ConversationSidebar from '../presentation/ConversationSidebar'
 import ConversationMain from '../presentation/ConversationMain'
 import RosterSidebar from '../presentation/RosterSidebar'
 import NewConversation from '../components/NewConversation'
+import LeaveConversation from '../components/LeaveConversation'
 
 import ActiveUser from './ActiveUser'
 import SetupChat from './SetupChat'
@@ -26,6 +27,7 @@ import {
     clearSearchResultsAction,
     onNewConversationCreatedAction,
     setActiveUserAction,
+    removeUserFromRosterAction,
     } from "../actions/chatActions";
 
 
@@ -43,6 +45,7 @@ class Chat extends Component {
         this.client.on('reset-unread-counts', this.onResetUnreadCounts);
         this.client.on('search-results', this.onSearchResults);
         this.client.on('new-conversation', this.onNewConversationCreated);
+        this.client.on('leave-conversation', this.onLeaveConversationCompleted);
         this.client.on('subscribe-new-conversation', this.onSubscribeNewConversation);
     }
     
@@ -122,6 +125,23 @@ class Chat extends Component {
         this.props.setActiveUserAction(data);
     }
 
+    onLeaveConversation = (data) => {
+        this.client.leaveConversation(data)
+    }
+
+    onLeaveConversationCompleted = (data) => {
+        const { activeConversation, activeUserId } = this.props;
+        if(!_.isEmpty(activeConversation) && activeConversation.id === data.conversation.id){
+            this.props.removeUserFromRosterAction(data);
+        }
+
+        if(!_.isEmpty(activeUserId) && activeUserId === data.user.userId){
+            //Update the view for this user he left!
+            //remove the conversation from his converstaions and change his active conversation ?
+            console.log('Removed me')
+        }
+    }
+
     onSetupChat = (data) => {
         if(!_.isEmpty(this.props.activeUserId)){
             const data = {
@@ -135,7 +155,7 @@ class Chat extends Component {
 
 
     render() {
-        const {conversations, messages, roster, users, activeConversation} = this.props;
+        const {conversations, messages, roster, users, activeConversation, activeUserId, searchResults} = this.props;
         return (
             <div>
                 --------------------------------------
@@ -143,9 +163,13 @@ class Chat extends Component {
                 <SetupChat onSetupChat={this.onSetupChat}/>
                 --------------------------------------
                 <ConversationSidebar conversations={conversations}/>
-                <ConversationMain activeUserId={this.props.activeUserId} messages={messages} users={users} activeConversation={activeConversation} onSendMessage={this.onSendMessage}/>
+                --------------------------------------
+                <ConversationMain activeUserId={activeUserId} messages={messages} users={users} activeConversation={activeConversation} onSendMessage={this.onSendMessage}/>
+                --------------------------------------
                 <RosterSidebar roster={roster} users={users}/>
-                <NewConversation activeUserId={this.props.activeUserId} onNewConversation={this.onNewConversation} onSearch={this.onSearch} searchResults={this.props.searchResults}/>
+                <LeaveConversation activeConversation={activeConversation} activeUserId={activeUserId} onLeaveConversation={this.onLeaveConversation}/>
+                --------------------------------------
+                <NewConversation activeUserId={activeUserId} onNewConversation={this.onNewConversation} onSearch={this.onSearch} searchResults={searchResults}/>
             </div>
         );
     }
@@ -179,6 +203,7 @@ function mapDispatchToProps(dispatch){
         clearSearchResultsAction,
         onNewConversationCreatedAction,
         setActiveUserAction,
+        removeUserFromRosterAction,
     }, dispatch)
 }
 

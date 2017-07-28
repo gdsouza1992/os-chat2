@@ -190,7 +190,20 @@ class Socket{
             })
                                 
 
-
+            client.on('leave-conversation', function(data) {
+                if(data.newAdmin){
+                    // set the new user as admin and notify the group
+                }
+                GroupMembers.removeUserFromGroup(data)
+                .then((response) => {
+                    server.to(`conversation:${data.conversation.id}`).emit('leave-conversation-server', response.data);
+                    res.json({messages : 'Removed user from group'})
+                })
+                .catch((err) => {
+                    const error = {messages : 'Error in removing user', err}
+                    server.emit('send-error-server', error);
+                })
+            })
 
 
             client.on('new-conversation', function(data){

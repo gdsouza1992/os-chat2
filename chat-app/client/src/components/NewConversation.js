@@ -43,6 +43,10 @@ class NewConversation extends Component {
 
     updateSelection = (roomType) => {
         this.setState({roomType: roomType});
+        if(_.isEmpty(roomType)){
+            return;
+        }
+
         if(roomType.value === 'dm' || roomType.value === ''){
             this.setState({isGroup: false})
         } else {
@@ -57,8 +61,8 @@ class NewConversation extends Component {
     validateForm = (data) => {
         const {name, type, members} = data;
         let validationMsg = '';
-        if(_.isEmpty(name)){
-            validationMsg += 'Room name is required\n'
+        if(_.isEmpty(name) && type === 'group'){
+            validationMsg += 'Group name is required\n'
         }
         if(_.isEmpty(type)){
             validationMsg += 'Room type is required\n'
@@ -71,8 +75,6 @@ class NewConversation extends Component {
             this.setState({validationMsg: validationMsg});
             return false;
         }
-
-        
         return true;
     }
 
@@ -90,7 +92,16 @@ class NewConversation extends Component {
             members: this.state.roomMembers
         }
 
+
+
         if(this.validateForm(data)){
+            if(data.type === 'dm'){
+                data.name = `DM ${data.members.label}`;
+                data.privacy = true;
+            } else {
+                data.name = `GROUP ${data.name}`;
+            }
+
             this.props.onNewConversation(data)
             this.setState({'submitSuccess': true});
         }
@@ -104,16 +115,26 @@ class NewConversation extends Component {
         this.setState({'submitSuccess': false});
     }
 
+    renderGroupSettings = () => {
+        const {isGroup} = this.state;
+        return isGroup && (
+            <div>
+                Group Name:
+                <input value={this.state.conversationName} onChange={this.handleChange}/>
+                Private:
+                <input type="checkbox" checked={this.state.privacy} onClick={this.handleClick}/>
+            </div>
+        )
+    }
+
 
 
     render() {
         return(
             <div>
-                Room Name:
-                <input value={this.state.conversationName} onChange={this.handleChange}/>
-                Private:
-                <input type="checkbox" checked={this.state.privacy} onClick={this.handleClick}/>
-                Type:
+                Create a New Conversation
+                <br/>
+                Conversation Type:
                 
                 <Select
                     name="roomTypeSelect"
@@ -121,7 +142,9 @@ class NewConversation extends Component {
                     options={this.state.roomTypeOptions}
                     onChange={this.updateSelection}
                 />
+
                 <SearchUserDropDown setSelection={this.setRoomMembers} searchResults={this.props.searchResults} isMultiple={this.state.isGroup} onSearch={this.props.onSearch} submitSuccess={this.state.submitSuccess} clearFields={this.clearFields}/>
+                {this.renderGroupSettings()}
                 <ValidationMessage validationMessage={this.state.validationMsg}/>
                 <button onClick={this.addConversation}>
                     Add

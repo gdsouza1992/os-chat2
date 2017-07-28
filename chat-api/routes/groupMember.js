@@ -214,13 +214,24 @@ router.route('/user/:user_id')
     //   });
 })
 
+router.route('/user/delete/:user_id')
 // delete a groupmeber by uid and convo id
-.delete(function(req, res) {
+.post(function(req, res) {
     var conversationId = req.body.conversationId;
-    var groupMember = GroupMember.build({userId: req.params.user_id, conversationId : conversationId});
-    groupMember._modelOptions.instanceMethods.removeByUserIdConvoId()
+    var userId = parseInt(req.params.user_id);
+    var groupMember = GroupMember.build();
+    groupMember._modelOptions.instanceMethods.setSoftDelete(conversationId, userId)
     .then((data) => {
-        res.json({ message: 'GroupMember removed!' });
+        const removedConversation = ({
+            conversation : {
+                id : conversationId
+            },
+            user: {
+                userId : userId
+            }
+        });
+        console.log(removedConversation);
+        res.json(removedConversation);
     })
     .catch((error) => {
         res.send('Conversation not found');
@@ -236,6 +247,7 @@ router.route('/user/:user_id')
     //     res.send("GroupMember not found");
     //   });
 });
+
 
 // Middleware to use for all requests
 router.use(function(req, res, next) {

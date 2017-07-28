@@ -4,6 +4,7 @@ const _ = require('lodash');
 export default function(state = {}, action) {
     let data;
     let conversations;
+    let roster;
 
     console.log("ConversationReducer")
 
@@ -20,7 +21,7 @@ export default function(state = {}, action) {
         return data
 
     case "ON_LOAD_ROSTER":
-        const roster = action.payload.result.groupMembers;
+        roster = action.payload.result.groupMembers;
         data = Object.assign({}, state, {'roster': roster});
         return data;
 
@@ -41,9 +42,13 @@ export default function(state = {}, action) {
         return data;
 
 
-    // case "ON_SET_CONVERSATIONS":
-    //     data = Object.assign({}, state, {'activeConversation': action.payload}); 
-    //     return data
+    case "ON_REMOVE_FROM_ROSTER":
+        roster = _.cloneDeep(state.roster);
+        const removedUserId = action.payload.user.userId;
+        var rosterIndex = roster.indexOf(removedUserId);
+        roster.splice(rosterIndex, 1);
+        data = Object.assign({}, state, {'roster': roster}); 
+        return data
 
     // case "ON_SHOW_NEW_MESSAGE_NOTIFICATION":
     //     // console.log(state,action.payload)
